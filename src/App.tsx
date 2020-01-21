@@ -3,7 +3,11 @@ import React from "react";
 import Routes from "./Routes";
 const App: React.FC = () => {
   //return UseRouter(Routes);
-  return <Routes />;
+  return (
+    <div data-testid="videoApp">
+      <Routes />
+    </div>
+  );
 };
 
 export default App;

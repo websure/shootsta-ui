@@ -1,7 +1,5 @@
 import React, {
   createContext,
-  useContext,
-  useState,
   useEffect,
   useReducer
 } from "react";

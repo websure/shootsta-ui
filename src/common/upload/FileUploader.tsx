@@ -12,6 +12,7 @@ const FileUploader: React.FC<IProps> = ({ onChangeHandler }) => {
       <input
         type="file"
         name="file"
+        data-testid="uploader"
         onChange={event => onChangeHandler(event)}
       />
     </>

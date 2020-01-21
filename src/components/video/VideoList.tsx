@@ -22,7 +22,9 @@ const VideoList: React.FC = () => {
       );
     });
   };
-  return <>{imgList.length > 0 && showThumbList()}</>;
+  return (
+    <>{imgList.length > 0 ? showThumbList() : <h4 data-testid="noThumbImages"> No videos upload </h4>}</>
+  );
 };
 
 export default VideoList;

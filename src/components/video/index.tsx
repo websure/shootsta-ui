@@ -28,7 +28,7 @@ const Videos: React.FC = () => {
               </Link>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row data-testid="videoList">
             <VideoList />
           </Grid.Row>
         </Grid>
