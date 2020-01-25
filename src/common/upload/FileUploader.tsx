@@ -1,22 +1,30 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Grid } from "semantic-ui-react";
-
+/* 
+  File uploader 
+  by defaults accept Mp4 videos
+*/
+import React, { forwardRef } from "react";
 interface IProps {
   onChangeHandler: (event: any) => void;
+  accept?: string;
   [key: string]: any;
 }
+type Ref = HTMLInputElement;
 
-const FileUploader: React.FC<IProps> = ({ onChangeHandler }) => {
-  return (
-    <>
-      <input
-        type="file"
-        name="file"
-        data-testid="uploader"
-        onChange={event => onChangeHandler(event)}
-      />
-    </>
-  );
-};
+const FileUploader: React.FC<IProps> = forwardRef<Ref, IProps>(
+  ({ onChangeHandler, accept = "video/mp4" }, ref) => {
+    return (
+      <>
+        <input
+          type="file"
+          ref={ref}
+          name="file"
+          data-testid="uploader"
+          accept={accept}
+          onChange={event => onChangeHandler(event)}
+        />
+      </>
+    );
+  }
+);
 
 export default FileUploader;

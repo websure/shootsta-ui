@@ -6,7 +6,7 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "semantic-ui-css/semantic.min.css";
 
-function Base() {
+const Base = () => {
   return (
     <Router>
       <div className="App">
@@ -14,7 +14,7 @@ function Base() {
       </div>
     </Router>
   );
-}
+};
 
 ReactDOM.render(<Base />, document.getElementById("root"));
 

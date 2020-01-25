@@ -1,11 +1,13 @@
 import React from "react";
-//import UseRouter from "./common/hoc/useRouter";
+import VideoContext from "./components/video/ContextManagement";
 import Routes from "./Routes";
+
 const App: React.FC = () => {
-  //return UseRouter(Routes);
   return (
     <div data-testid="videoApp">
-      <Routes />
+      <VideoContext>
+        <Routes />
+      </VideoContext>
     </div>
   );
 };

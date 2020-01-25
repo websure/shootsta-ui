@@ -1,5 +1,4 @@
 import React from "react";
-import { Router } from "react-router-dom";
 import { render, cleanup, wait } from "@testing-library/react";
 import VideoUploadModal from "../video/VideoUploadModal";
 
@@ -25,12 +24,8 @@ describe("Modal Component", function() {
   });
 
   test("modal file uploader is available", async() => {
-    const { container, getByTestId } = render(<VideoUploadModal />);
-
+    const { getByTestId } = render(<VideoUploadModal />);
     await wait(() => getByTestId("uploader"));
     expect(getByTestId("uploader")).toBeInTheDocument()
-    // let input = container.getElementsByTagName("input");
-    // console.log("input ", container.children);
-    //expect(input.length).toBe(1)
   });
 });

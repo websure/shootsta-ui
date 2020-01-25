@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Button, Icon, Modal } from "semantic-ui-react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { Button, Icon, Modal, Message } from "semantic-ui-react";
 import FileUploader from "../../common/upload/FileUploader";
 import useAsync from "../../common/hoc/useAsync";
 import VideoApi from "./VideoApi";
+import { stateContext, IVideoList } from "./ContextManagement";
 
 interface IProps {
   history?: {
@@ -10,36 +11,56 @@ interface IProps {
     goBack: () => void;
   };
 }
+
 const VideoUploadModal: React.FC<IProps> = ({ history }) => {
+  const { updateVideoList } = useContext(stateContext);
   const [modalOpen] = useState(true);
-  const [selectedFile, setSelectedFile] = useState("");
+  const [selectedFile, setSelectedFile] = useState();
   const [disableUploadBtn, setDisableUploadBtn] = useState(true);
   const [refresh, setRefresh] = useState(Date.now());
-  const { fetch, loading, data, reset, error } = useAsync();
+  const [success, setSuccess] = useState(false);
+  const { fetch, loading, reset, error } = useAsync();
+  const UploaderRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (selectedFile) {
       setDisableUploadBtn(false);
     }
   }, [selectedFile]);
 
-  useEffect(() => {
-    if (data) {
-      console.log("data ", data);
-    }
-  }, [data]);
-
   const onChangeHandler = (event: any) => {
-    console.log(event.target.files[0]);
-    setSelectedFile(event.target.files[0]);
+    try {
+      const data = new FormData();
+      data.append("video", event.target.files[0]);
+      setSelectedFile(data);
+    } catch (e) {
+      console.log(e);
+    }
   };
-
+  const showMsg = (val: string) => {
+    if (val === "success") {
+      setSuccess(true);
+    }
+    setTimeout(() => {
+      setSuccess(false);
+    }, 3000);
+  };
   const startUpload = () => {
-    const data = new FormData();
-    data.append("file", selectedFile);
     /* Api to upload the file */
-    fetch(() => VideoApi.uploadVideo(data));
+    fetch(() =>
+      VideoApi.uploadVideo(selectedFile).then(resp => {
+        if (updateVideoList) {
+          let obj: IVideoList = {};
+          obj[`${resp.data.result.id}`] = resp.data.result;
+          showMsg("success");
+          if (null !== UploaderRef.current) {
+            UploaderRef.current.value = "";
+          }
+          updateVideoList(obj);
+        }
+      })
+    );
   };
-
   const handleClose = () => {
     history?.goBack();
   };
@@ -53,17 +74,20 @@ const VideoUploadModal: React.FC<IProps> = ({ history }) => {
       closeOnDimmerClick={false}
     >
       <Modal.Header>
-        <h3>Upload Video</h3>
+        <h3>Upload Video :</h3>
       </Modal.Header>
       {!error ? (
         <Modal.Content>
-          <FileUploader onChangeHandler={onChangeHandler} />
+          <FileUploader ref={UploaderRef} onChangeHandler={onChangeHandler} />
+          {success && (
+            <Message compact success color="green">
+              Video uploaded successfully !!
+            </Message>
+          )}
         </Modal.Content>
       ) : (
-        <div style={{ padding: '10px 0px 0px 20px' }}>
-          <h4 style={{ color: "#ff392b" }}>
-            Error in uploading video
-          </h4>
+        <div style={{ padding: "10px 0px 0px 20px" }}>
+          <h4 style={{ color: "#ff392b" }}>Error in uploading video</h4>
           <Button
             data-testid="retryBtn"
             color="red"
@@ -78,7 +102,6 @@ const VideoUploadModal: React.FC<IProps> = ({ history }) => {
           </Button>
         </div>
       )}
-
       <Modal.Actions style={{ borderTop: "0px" }}>
         <Button
           data-testid="cancelUpload"
@@ -94,7 +117,7 @@ const VideoUploadModal: React.FC<IProps> = ({ history }) => {
           color="green"
           onClick={startUpload}
           inverted
-          disabled={disableUploadBtn || loading || error}
+          disabled={disableUploadBtn || loading || error || success}
         >
           <Icon name="check" /> Upload
         </Button>

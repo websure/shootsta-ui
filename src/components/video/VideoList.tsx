@@ -1,29 +1,67 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Grid, Image } from "semantic-ui-react";
-import { stateContext } from "./ContextManagement";
+import { Link, useLocation } from "react-router-dom";
+import { stateContext, IVideoList } from "./ContextManagement";
 
 const VideoList: React.FC = () => {
-  const { thumbnailList } = useContext(stateContext);
-  const [imgList, setImgList] = useState<string[]>([]);
-
+  const { videoObjList = {} } = useContext(stateContext);
+  const [videoList, setVideoList] = useState<IVideoList>({});
+  const Location = useLocation();
   useEffect(() => {
-    if (thumbnailList.length > 0) {
-      setImgList(thumbnailList);
+    if (Object.keys(videoObjList).length > 0) {
+      setVideoList({ ...videoList, ...videoObjList });
     }
-  }, [thumbnailList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoObjList]);
 
   const showThumbList = () => {
-    console.log("context ", thumbnailList);
-    return imgList.map((val, i) => {
+    let keys = Object.keys(videoList);
+    return keys.map((key, i) => {
       return (
-        <Grid.Column key={i} mobile={4} tablet={4} computer={3}>
-          <Image src={val} size="medium" bordered />
+        <Grid.Column
+          key={videoList[key].id}
+          mobile={8}
+          tablet={4}
+          computer={3}
+          //width={4}
+          textAlign="center"
+          style={{ marginBottom: "1rem" }}
+        >
+          <Link
+            data-testid={videoList[key].id}
+            to={{
+              pathname: `videostream`,
+              // open route in modal
+              state: {
+                ismodal: Location,
+                videosrc: videoList[key].path,
+                videoid: videoList[key].id,
+                video: videoList[key]
+              }
+            }}
+          >
+            <Image
+              title={videoList[key].name}
+              src={`http://localhost:5000/assets/images/${videoList[key].id}.png`}
+              alt={videoList[key].name}
+              bordered
+            />
+          </Link>
         </Grid.Column>
       );
     });
   };
+
   return (
-    <>{imgList.length > 0 ? showThumbList() : <h4 data-testid="noThumbImages"> No videos upload </h4>}</>
+    <>
+      {Object.keys(videoList).length > 0 ? (
+        showThumbList()
+      ) : (
+        <Grid.Column>
+          <h4 data-testid="noThumbImages"> No videos upload </h4>
+        </Grid.Column>
+      )}
+    </>
   );
 };
 
