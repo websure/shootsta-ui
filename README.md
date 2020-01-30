@@ -9,13 +9,13 @@ Responsive react application to view list of uploaded videos , upload and stream
     react testing library
     semantic ui react
     
-### Bootstrapping server
+### Bootstrapping Application
 -   clone the project : git clone https://github.com/websure/shootsta-ui.git
--   cd to project root folder and execute following commands in the terminal
-        -   npm install
-        -   npm start
+-   cd to project root folder and execute following commands in the terminal 
+    - npm install 
+    - npm start
 -   Application will run on http://localhost:3000/
--   
+  
 ### features
 -   Responsive Application
 -   Display a dahboard page to display list of uploaded videos

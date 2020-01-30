@@ -3,7 +3,7 @@
   Fetches video list from the server
   on new video upload, updates the video list
 */
-import React, { createContext, useEffect, useReducer } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import VideoApi from "./VideoApi";
 
@@ -33,35 +33,22 @@ export interface IVideoList {
   [key: string]: IVideoObj;
 }
 const VideoContext: React.FC = ({ children }) => {
+  const [data, setData] = useState({});
   useEffect(() => {
     fetchThumbnail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  
   const fetchThumbnail = () => {
     /* Fetch the image list */
     VideoApi.getvideoList()
       .then((resp: AxiosResponse) => {
-        dispatch({ type: "update", payload: resp.data.result });
+        setData(resp.data.result);
       })
       .catch(e => {});
-
-    // Api.get("/video")
-    //   .then((resp: AxiosResponse) => {
-    //     dispatch({ type: "update", payload: resp.data.result });
-    //   })
-    //   .catch(e => {});
   };
-  const Reducer = (state: any, action: IAction) => {
-    switch (action.type) {
-      case "update": {
-        return { ...state, ...action.payload };
-      }
-    }
-  };
-  const [data, dispatch] = useReducer(Reducer, {});
   const updateVideoList = (obj: IVideoList | {}) => {
-    dispatch({ type: "update", payload: obj });
+    setData({ ...data, ...obj });
   };
 
   return (
